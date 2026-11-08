@@ -1,0 +1,657 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#f6f5f0">
+<title>問いの広場</title>
+
+<style>
+:root {
+  --bg: #f6f5f0;
+  --paper: #ffffff;
+  --ink: #293a43;
+  --muted: #78858a;
+  --accent: #547c78;
+  --accent-light: #e6efeb;
+  --line: #e5e7e2;
+  --warm: #f1e9d9;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: -apple-system, BlinkMacSystemFont,
+    "Hiragino Kaku Gothic ProN", "Noto Sans JP",
+    Meiryo, sans-serif;
+  line-height: 1.75;
+}
+button, textarea, input { font: inherit; }
+button { cursor: pointer; }
+header {
+  background: #293f49;
+  color: white;
+  padding: 32px 20px 26px;
+}
+.header-inner, main {
+  width: min(760px, 100%);
+  margin: auto;
+}
+.brand {
+  font-size: 27px;
+  font-weight: 750;
+  letter-spacing: .08em;
+}
+.tagline {
+  color: #dce8e4;
+  font-size: 13px;
+  margin-top: 3px;
+}
+nav {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 14px 16px;
+  background: white;
+  border-bottom: 1px solid var(--line);
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+nav button {
+  border: 0;
+  border-radius: 30px;
+  background: transparent;
+  color: var(--muted);
+  padding: 9px 14px;
+  white-space: nowrap;
+  font-size: 13px;
+}
+nav button.active {
+  background: var(--accent-light);
+  color: var(--accent);
+  font-weight: 700;
+}
+main { padding: 25px 17px 65px; }
+.page { display: none; }
+.page.active { display: block; }
+h1 { font-size: 23px; margin: 0 0 5px; }
+.intro {
+  color: var(--muted);
+  font-size: 14px;
+  margin: 0 0 22px;
+}
+.panel, .question-card {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 17px;
+  padding: 19px;
+  margin-bottom: 15px;
+}
+.section-label {
+  font-size: 11px;
+  letter-spacing: .12em;
+  color: var(--accent);
+  font-weight: 750;
+  margin-bottom: 8px;
+}
+.photo {
+  min-height: 220px;
+  border-radius: 13px;
+  background:
+    linear-gradient(145deg, rgba(29,48,50,.12), rgba(29,48,50,.45)),
+    url("https://images.unsplash.com/photo-1508057198894-247b23fe5ade?w=1000")
+    center 48% / cover;
+  display: flex;
+  align-items: end;
+  padding: 18px;
+  color: white;
+  font-weight: 700;
+  text-shadow: 0 1px 5px #333;
+  margin-bottom: 17px;
+}
+label {
+  display: block;
+  font-weight: 650;
+  font-size: 14px;
+  margin: 12px 0 6px;
+}
+textarea, input[type="text"] {
+  width: 100%;
+  border: 1px solid #dce1dc;
+  border-radius: 11px;
+  padding: 12px;
+  background: #fff;
+  color: var(--ink);
+  outline: none;
+}
+textarea { min-height: 100px; resize: vertical; }
+textarea:focus, input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px #547c7818;
+}
+.primary {
+  background: var(--accent);
+  color: white;
+  border: 0;
+  border-radius: 11px;
+  padding: 11px 18px;
+  font-weight: 700;
+}
+.secondary {
+  background: var(--accent-light);
+  color: var(--accent);
+  border: 0;
+  border-radius: 10px;
+  padding: 9px 13px;
+  font-weight: 650;
+}
+.ghost {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  border-radius: 9px;
+  padding: 7px 10px;
+  font-size: 12px;
+}
+.actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+.question-title {
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.meta {
+  color: var(--muted);
+  font-size: 11px;
+  margin-bottom: 9px;
+}
+.reply {
+  background: #f7f8f5;
+  border-radius: 11px;
+  padding: 12px 14px;
+  margin-top: 9px;
+  font-size: 14px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.reply-label {
+  color: var(--muted);
+  font-size: 11px;
+  margin-top: 15px;
+  font-weight: 700;
+}
+.reply-form {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+.small-note {
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 7px;
+}
+.empty {
+  text-align: center;
+  color: var(--muted);
+  padding: 30px 10px;
+  font-size: 14px;
+}
+.notice {
+  background: var(--warm);
+  padding: 13px 15px;
+  border-radius: 12px;
+  font-size: 13px;
+  margin: 15px 0;
+}
+footer {
+  text-align: center;
+  color: var(--muted);
+  font-size: 11px;
+  padding: 25px;
+}
+hr { border: 0; border-top: 1px solid var(--line); margin: 18px 0; }
+@media (max-width: 480px) {
+  header { padding: 25px 18px; }
+  .brand { font-size: 24px; }
+  main { padding: 21px 13px 55px; }
+  .panel, .question-card { padding: 15px; }
+  .photo { min-height: 190px; }
+}
+</style>
+</head>
+
+<body>
+<header>
+  <div class="header-inner">
+    <div class="brand">問いの広場</div>
+    <div class="tagline">いつもの景色に、まだ知らない問いを。</div>
+  </div>
+</header>
+
+<nav>
+  <button class="active" data-page="discover">発掘隊</button>
+  <button data-page="room">雑談部屋</button>
+  <button data-page="saved">持ち帰った問い</button>
+</nav>
+
+<main>
+  <!-- 発掘隊 -->
+  <section id="discover" class="page active">
+    <h1>これってなんで？発掘隊</h1>
+    <p class="intro">
+      いつもの景色を、少し違う角度から眺めてみよう。
+    </p>
+
+    <div class="panel">
+      <div class="section-label">TODAY'S PHOTO</div>
+      <div class="photo">
+        身近な景色を、じっくり眺めてみよう。
+      </div>
+      <p style="font-size:14px;">
+        この写真を見て、何か気になることはありますか？
+        小さな疑問でも、答えがわからないことでも大歓迎!!
+      </p>
+      <form id="discoverForm">
+        <label for="discoverInput">見つけた問い</label>
+        <textarea id="discoverInput" maxlength="500"
+          placeholder="例えば、この景色の中にあるものは、どうしてこの形なんだろう？"
+          required></textarea>
+        <div class="actions">
+          <button class="primary" type="submit">問いを発掘する</button>
+        </div>
+      </form>
+      <div class="small-note">
+        見つけた問いは、自分だけで考えても、雑談部屋におすそわけしてもOK。
+      </div>
+    </div>
+
+    <h2 style="font-size:17px;">みんなが見つけた問い</h2>
+    <div id="discoveryList"></div>
+  </section>
+
+  <!-- 雑談部屋 -->
+  <section id="room" class="page">
+    <h1>問いの雑談部屋</h1>
+    <p class="intro">
+      誰かの問いに出会い、いろいろな考え方をみてみよう。
+    </p>
+
+    <div class="panel">
+      <div class="section-label">QUESTION SHARING</div>
+      <strong>問いのおすそわけ</strong>
+      <p class="small-note">
+        発掘隊で見つけた問いも、日常で思いついた問いも自由に投稿できます。
+      </p>
+      <form id="questionForm">
+        <label for="questionInput">あなたの問い</label>
+        <textarea id="questionInput" maxlength="500"
+          placeholder="どうして〇〇なんだろう？"
+          required></textarea>
+        <div class="actions">
+          <button class="primary" type="submit">おすそわけする</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="notice">
+      すぐに賛成・反対を決めなくても大丈夫。
+      「この人はどうして、そう考えたんだろう？」と、
+      一度立ち止まってみるのもいいかもしれません。
+      <br><br>
+      理解することと、賛成することは別です。
+      自分の考えも大切にしましょう。
+    </div>
+
+    <div id="questionList"></div>
+  </section>
+
+  <!-- 保存 -->
+  <section id="saved" class="page">
+    <h1>問いのお持ち帰り</h1>
+    <p class="intro">
+      気になった問いを、あとでもう一度考えてみよう。
+    </p>
+    <div id="savedList"></div>
+  </section>
+</main>
+
+<footer>
+  問いの広場 · 自分の考えも、誰かの考えも、大切に。
+</footer>
+
+<script>
+const STORAGE_KEY = "toinhiroba_prototype_v1";
+
+const starterData = {
+  discoveries: [],
+  questions: [
+    {
+      id: "sample-1",
+      text: "どうして雨の日は、少し静かに感じるんだろう？",
+      date: new Date().toISOString(),
+      replies: [
+        "雨の音が、ほかの音を隠しているからかな？",
+        "外に出る人が減るから、街全体が静かになるのかも。",
+        "雨の日は、自分の気分も少し落ち着いているのかもしれない。"
+      ]
+    },
+    {
+      id: "sample-2",
+      text: "どうして時計の数字は12個なんだろう？",
+      date: new Date().toISOString(),
+      replies: [
+        "昔の時間の数え方と関係しているのかな。",
+        "12という数字は、いろいろな数で割り切れるから便利そう。"
+      ]
+    }
+  ],
+  saved: [],
+  hidden: []
+};
+
+let data;
+
+function loadData() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    data = raw ? JSON.parse(raw) : starterData;
+    if (!data || !Array.isArray(data.questions)) {
+      data = structuredClone(starterData);
+    }
+  } catch (error) {
+    data = JSON.parse(JSON.stringify(starterData));
+  }
+}
+
+function saveData() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
+function makeId() {
+  return Date.now().toString(36) +
+    Math.random().toString(36).slice(2, 8);
+}
+
+function formatDate(value) {
+  return new Date(value).toLocaleDateString("ja-JP", {
+    year: "numeric",
+    month: "long",
+    day: "numeric"
+  });
+}
+
+function element(tag, className, text) {
+  const el = document.createElement(tag);
+  if (className) el.className = className;
+  if (text !== undefined) el.textContent = text;
+  return el;
+}
+
+function makeButton(text, className, action) {
+  const button = element("button", className, text);
+  button.type = "button";
+  button.addEventListener("click", action);
+  return button;
+}
+
+// ページ切り替え
+document.querySelectorAll("nav button").forEach(button => {
+  button.addEventListener("click", () => {
+    document.querySelectorAll("nav button")
+      .forEach(b => b.classList.remove("active"));
+    document.querySelectorAll(".page")
+      .forEach(p => p.classList.remove("active"));
+
+    button.classList.add("active");
+    document.getElementById(button.dataset.page)
+      .classList.add("active");
+
+    renderAll();
+  });
+});
+
+// 発掘隊への投稿
+document.getElementById("discoverForm")
+  .addEventListener("submit", event => {
+    event.preventDefault();
+    const input = document.getElementById("discoverInput");
+    const text = input.value.trim();
+    if (!text) return;
+
+    data.discoveries.unshift({
+      id: makeId(),
+      text,
+      date: new Date().toISOString()
+    });
+
+    saveData();
+    input.value = "";
+    renderAll();
+    alert("問いを発掘しました！");
+  });
+
+// 雑談部屋への投稿
+document.getElementById("questionForm")
+  .addEventListener("submit", event => {
+    event.preventDefault();
+    const input = document.getElementById("questionInput");
+    const text = input.value.trim();
+    if (!text) return;
+
+    data.questions.unshift({
+      id: makeId(),
+      text,
+      date: new Date().toISOString(),
+      replies: []
+    });
+
+    saveData();
+    input.value = "";
+    renderAll();
+    alert("問いをおすそわけしました！");
+  });
+
+// 発掘した問いを雑談部屋へ持っていく
+function shareDiscovery(id) {
+  const item = data.discoveries.find(x => x.id === id);
+  if (!item) return;
+
+  document.getElementById("questionInput").value = item.text;
+  showPage("room");
+  document.getElementById("questionInput").focus();
+}
+
+function showPage(page) {
+  document.querySelectorAll("nav button").forEach(button => {
+    button.classList.toggle("active", button.dataset.page === page);
+  });
+  document.querySelectorAll(".page").forEach(section => {
+    section.classList.toggle("active", section.id === page);
+  });
+}
+
+// 保存・解除
+function toggleSave(id) {
+  if (data.saved.includes(id)) {
+    data.saved = data.saved.filter(x => x !== id);
+  } else {
+    data.saved.push(id);
+  }
+  saveData();
+  renderAll();
+}
+
+// 非表示
+function hideQuestion(id) {
+  if (!confirm("この投稿を自分の画面から非表示にしますか？")) return;
+  if (!data.hidden.includes(id)) data.hidden.push(id);
+  saveData();
+  renderAll();
+}
+
+// おかえし投稿
+function addReply(id, textarea) {
+  const text = textarea.value.trim();
+  if (!text) return;
+
+  const question = data.questions.find(x => x.id === id);
+  if (!question) return;
+
+  question.replies.push(text);
+  saveData();
+  renderAll();
+}
+
+// 発掘隊の投稿一覧
+function renderDiscoveries() {
+  const container = document.getElementById("discoveryList");
+  container.replaceChildren();
+
+  const items = data.discoveries.filter(
+    x => !data.hidden.includes(x.id)
+  );
+
+  if (!items.length) {
+    container.append(element("div", "empty",
+      "まだ問いはありません。最初の発掘者になってみよう。"));
+    return;
+  }
+
+  items.forEach(item => {
+    const card = element("article", "question-card");
+    card.append(element("div", "meta",
+      "匿名 · " + formatDate(item.date)));
+    card.append(element("div", "question-title", item.text));
+
+    const actions = element("div", "actions");
+    actions.append(makeButton(
+      "雑談部屋におすそわけ",
+      "secondary",
+      () => shareDiscovery(item.id)
+    ));
+    actions.append(makeButton(
+      "非表示",
+      "ghost",
+      () => hideQuestion(item.id)
+    ));
+    card.append(actions);
+    container.append(card);
+  });
+}
+
+// 雑談部屋の一覧
+function renderQuestions() {
+  const container = document.getElementById("questionList");
+  container.replaceChildren();
+
+  const items = data.questions.filter(
+    x => !data.hidden.includes(x.id)
+  );
+
+  if (!items.length) {
+    container.append(element("div", "empty",
+      "まだ問いがありません。最初の問いをおすそわけしてみよう。"));
+    return;
+  }
+
+  items.forEach(question => {
+    const card = element("article", "question-card");
+
+    card.append(element("div", "meta",
+      "問いのおすそわけ · 匿名 · " + formatDate(question.date)));
+    card.append(element("div", "question-title", question.text));
+
+    const actions = element("div", "actions");
+    const isSaved = data.saved.includes(question.id);
+
+    actions.append(makeButton(
+      isSaved ? "持ち帰りを解除" : "問いを持ち帰る",
+      "secondary",
+      () => toggleSave(question.id)
+    ));
+    actions.append(makeButton(
+      "非表示",
+      "ghost",
+      () => hideQuestion(question.id)
+    ));
+    card.append(actions);
+
+    card.append(element("div", "reply-label",
+      "おかえし · " + question.replies.length + "件"));
+
+    question.replies.forEach(reply => {
+      card.append(element("div", "reply", reply));
+    });
+
+    const form = element("form", "reply-form");
+    const label = element("label", "", "あなたのおかえし");
+    const textarea = element("textarea");
+    textarea.maxLength = 1000;
+    textarea.required = true;
+    textarea.placeholder =
+      "自分はこう考えた。こんな見方もあるかもしれない。";
+
+    const submit = element("button", "primary", "おかえしする");
+    submit.type = "submit";
+
+    form.append(label, textarea, submit);
+    form.addEventListener("submit", event => {
+      event.preventDefault();
+      addReply(question.id, textarea);
+    });
+
+    card.append(form);
+    container.append(card);
+  });
+}
+
+// 持ち帰った問い
+function renderSaved() {
+  const container = document.getElementById("savedList");
+  container.replaceChildren();
+
+  const items = data.questions.filter(
+    x => data.saved.includes(x.id) &&
+         !data.hidden.includes(x.id)
+  );
+
+  if (!items.length) {
+    container.append(element("div", "empty",
+      "まだ持ち帰った問いはありません。気になる問いを保存してみよう。"));
+    return;
+  }
+
+  items.forEach(question => {
+    const card = element("article", "question-card");
+    card.append(element("div", "meta",
+      "匿名 · " + formatDate(question.date)));
+    card.append(element("div", "question-title", question.text));
+    card.append(makeButton(
+      "持ち帰りを解除",
+      "ghost",
+      () => toggleSave(question.id)
+    ));
+    container.append(card);
+  });
+}
+
+function renderAll() {
+  renderDiscoveries();
+  renderQuestions();
+  renderSaved();
+}
+
+loadData();
+renderAll();
+</script>
+</body>
+</html>
